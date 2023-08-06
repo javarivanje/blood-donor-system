@@ -5,32 +5,33 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 
-@Entity(name = "user")
+@Entity(name = "users")
 @Table(
-        name = "user",
+        name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "user_email_unique",
+                        name = "users_email_unique",
                         columnNames = "email"
                 )
         }
 )
-public class User {
+public class Users {
 
     @Id
     @SequenceGenerator(
-            name = "user_id_seq",
-            sequenceName = "user_id_seq",
+            name = "users_id_seq",
+            sequenceName = "users_id_seq",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
-            generator = "user_id_seq"
+            generator = "users_id_seq"
     )
     @Column(
-            name = "user_id"
+            name = "id",
+            updatable = false
     )
-    private Long userId;
+    private Long Id;
 
     @Column(
             name = "first_name",
@@ -50,17 +51,25 @@ public class User {
     )
     private String email;
 
+    @Column(
+            name = "role",
+            nullable = false
+    )
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(
+            name = "blood_type",
+            nullable = false
+    )
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
 
-    public User() {
+    public Users() {
     }
 
-    public User(Long userId, String firstName, String lastName, String email, Role role, BloodType bloodType) {
-        this.userId = userId;
+    public Users(Long Id, String firstName, String lastName, String email, Role role, BloodType bloodType) {
+        this.Id = Id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -68,12 +77,12 @@ public class User {
         this.bloodType = bloodType;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getId() {
+        return Id;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setId(Long Id) {
+        this.Id = Id;
     }
 
     public String getFirstName() {
@@ -120,19 +129,21 @@ public class User {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(userId, user.userId) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(role, user.role) && Objects.equals(bloodType, user.bloodType);
+        Users users = (Users) o;
+        return Objects.equals(Id, users.Id) && Objects.equals(firstName, users.firstName)
+                && Objects.equals(lastName, users.lastName) && Objects.equals(email, users.email)
+                && Objects.equals(role, users.role) && Objects.equals(bloodType, users.bloodType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, firstName, lastName, email, role, bloodType);
+        return Objects.hash(Id, firstName, lastName, email, role, bloodType);
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "userId=" + userId +
+                "userId=" + Id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
