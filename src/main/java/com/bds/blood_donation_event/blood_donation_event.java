@@ -30,12 +30,6 @@ public class blood_donation_event {
     )
     private Long Id;
 
-    /*@Column(
-            name = "organizer_id",
-            nullable = false
-    )
-    private Long organizerId;*/
-
     @Column(
             name = "event_name",
             nullable = false
@@ -66,15 +60,6 @@ public class blood_donation_event {
     )
     private Users users;
 
-    public blood_donation_event(Long id, Long organizerId, String eventName, LocalDate eventDate, BloodType blood_type, Users users) {
-        Id = id;
-        //this.organizerId = organizerId;
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.blood_type = blood_type;
-        this.users = users;
-    }
-
     public blood_donation_event(Long id, String eventName, LocalDate eventDate, BloodType blood_type, Users users) {
         Id = id;
         this.eventName = eventName;
@@ -87,23 +72,8 @@ public class blood_donation_event {
         return users;
     }
 
-    /*public Long getOrganizerId() {
-        return organizerId;
-    }
-
-    public void setOrganizerId(Long organizerId) {
-        this.organizerId = organizerId;
-    }*/
-
     public void setUsers(Users users) {
         this.users = users;
-    }
-
-    public blood_donation_event(Long id, String eventName, LocalDate eventDate, BloodType blood_type) {
-        Id = id;
-        this.eventName = eventName;
-        this.eventDate = eventDate;
-        this.blood_type = blood_type;
     }
 
     public blood_donation_event() {
@@ -146,12 +116,12 @@ public class blood_donation_event {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         blood_donation_event that = (blood_donation_event) o;
-        return Objects.equals(Id, that.Id) && Objects.equals(eventName, that.eventName) && Objects.equals(eventDate, that.eventDate) && blood_type == that.blood_type;
+        return Objects.equals(Id, that.Id) && Objects.equals(eventName, that.eventName) && Objects.equals(eventDate, that.eventDate) && blood_type == that.blood_type && Objects.equals(users, that.users);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, eventName, eventDate, blood_type);
+        return Objects.hash(Id, eventName, eventDate, blood_type, users);
     }
 
     @Override
@@ -161,6 +131,7 @@ public class blood_donation_event {
                 ", eventName='" + eventName + '\'' +
                 ", eventDate=" + eventDate +
                 ", blood_type=" + blood_type +
+                ", users=" + users +
                 '}';
     }
 }
