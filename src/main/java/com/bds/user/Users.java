@@ -77,6 +77,14 @@ public class Users {
         this.bloodType = bloodType;
     }
 
+    public Users(String firstName, String lastName, String email, Role role, BloodType bloodType) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+        this.bloodType = bloodType;
+    }
+
     public Long getId() {
         return Id;
     }

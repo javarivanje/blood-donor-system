@@ -22,26 +22,26 @@ public class BdsApplication {
 	@Bean
 	CommandLineRunner runner(UsersRepository usersRepository) {
 		return args -> {
-			Users milos = new Users(
-					2L,
-					"milos",
-					"bacetic",
-					"milos@gmail.com",
-					Role.ADMIN,
-					BloodType.ABNeg
+			/*Users milos = new Users(
+					3L,
+					"nemanja",
+					"stanojevic",
+					"stanoje@gmail.com",
+					Role.DONOR,
+					BloodType.ABPos
 			);
 
-			/*Users uros = new Users(
-					2L,
-					"uros",
-					"bacetic",
-					"uros@gmail.com",
+			Users uros = new Users(
+					4L,
+					"milos",
+					"ristic",
+					"rile@gmail.com",
 					Role.DONOR,
-					BloodType.APos
-			);*/
-			List<Users> users = List.of(milos/*, uros*/);
+					BloodType.ANeg
+			);
+			List<Users> users = List.of(milos, uros);
 			usersRepository.saveAll(users);
-			usersRepository.findByRoleIs(Role.DONOR);
+			usersRepository.findByRoleIs(Role.DONOR);*/
 		};
 	}
 }

@@ -1,11 +1,11 @@
 package com.bds.user;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/admin")
@@ -20,5 +20,10 @@ public class UsersController {
     @GetMapping("/donor")
     public List<Users> getAllDonors() {
         return usersService.getAllDonors();
+    }
+
+    @PostMapping("/register_user")
+    public void registerNewUser(@RequestBody UsersRegistrationRequest request) {
+        usersService.registerNewUser(request);
     }
 }
