@@ -1,5 +1,7 @@
 package com.bds;
 
+import com.bds.BloodDonationEvent.BloodDonationEvent;
+import com.bds.BloodDonationEvent.BloodDonationEventRepository;
 import com.bds.user.BloodType;
 import com.bds.user.Role;
 import com.bds.user.Users;
@@ -9,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootApplication
@@ -20,7 +23,9 @@ public class BdsApplication {
 
 
 	@Bean
-	CommandLineRunner runner(UsersRepository usersRepository) {
+	CommandLineRunner runner(
+			UsersRepository usersRepository,
+			BloodDonationEventRepository bloodDonationEventRepository) {
 		return args -> {
 			/*Users milos = new Users(
 					3L,
@@ -41,7 +46,23 @@ public class BdsApplication {
 			);
 			List<Users> users = List.of(milos, uros);
 			usersRepository.saveAll(users);
-			usersRepository.findByRoleIs(Role.DONOR);*/
+			usersRepository.findByRoleIs(Role.DONOR);
+			bloodDonationEventRepository.save(
+					new BloodDonationEvent(
+							"moj ivent",
+							LocalDate.now(),
+							BloodType.ONeg,
+							5,
+							new Users(
+									1L,
+									"milos",
+									"ristic",
+									"rile@gmail.com",
+									Role.DONOR,
+									BloodType.ANeg
+							)
+					)
+			);*/
 		};
 	}
 }

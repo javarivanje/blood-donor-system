@@ -1,4 +1,4 @@
-package com.bds.blood_donation_event;
+package com.bds.BloodDonationEvent;
 
 
 import com.bds.user.BloodType;
@@ -10,9 +10,15 @@ import java.util.Objects;
 
 @Entity(name = "blood_donation_event")
 @Table(
-        name = "blood_donation_event"
+        name = "blood_donation_event",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "blood_donation_event_unique",
+                        columnNames = {"event_name", "event_date", "blood_type"}
+                )
+        }
 )
-public class blood_donation_event {
+public class BloodDonationEvent {
 
     @Id
     @SequenceGenerator(
@@ -49,7 +55,13 @@ public class blood_donation_event {
     @Enumerated(EnumType.STRING)
     private BloodType blood_type;
 
-    @ManyToOne
+    @Column(
+            name = "units",
+            nullable = false
+    )
+    private Integer units;
+
+    @ManyToOne(/*fetch = FetchType.LAZY*/)
     @JoinColumn(
             name = "organizer_id",
             nullable = false,
@@ -60,11 +72,19 @@ public class blood_donation_event {
     )
     private Users users;
 
-    public blood_donation_event(Long id, String eventName, LocalDate eventDate, BloodType blood_type, Users users) {
-        Id = id;
+    public BloodDonationEvent(Long id, String eventName, LocalDate eventDate, BloodType blood_type, Users users) {
+        this.Id = id;
         this.eventName = eventName;
         this.eventDate = eventDate;
         this.blood_type = blood_type;
+        this.users = users;
+    }
+
+    public BloodDonationEvent(String eventName, LocalDate eventDate, BloodType blood_type, Integer units, Users users) {
+        this.eventName = eventName;
+        this.eventDate = eventDate;
+        this.blood_type = blood_type;
+        this.units = units;
         this.users = users;
     }
 
@@ -76,7 +96,7 @@ public class blood_donation_event {
         this.users = users;
     }
 
-    public blood_donation_event() {
+    public BloodDonationEvent() {
     }
 
     public Long getId() {
@@ -111,26 +131,35 @@ public class blood_donation_event {
         this.blood_type = blood_type;
     }
 
+    public Integer getUnits() {
+        return units;
+    }
+
+    public void setUnits(Integer units) {
+        this.units = units;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        blood_donation_event that = (blood_donation_event) o;
-        return Objects.equals(Id, that.Id) && Objects.equals(eventName, that.eventName) && Objects.equals(eventDate, that.eventDate) && blood_type == that.blood_type && Objects.equals(users, that.users);
+        BloodDonationEvent that = (BloodDonationEvent) o;
+        return Objects.equals(Id, that.Id) && Objects.equals(eventName, that.eventName) && Objects.equals(eventDate, that.eventDate) && blood_type == that.blood_type && Objects.equals(units, that.units) && Objects.equals(users, that.users);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Id, eventName, eventDate, blood_type, users);
+        return Objects.hash(Id, eventName, eventDate, blood_type, units, users);
     }
 
     @Override
     public String toString() {
-        return "blood_donation_event{" +
+        return "BloodDonationEvent{" +
                 "Id=" + Id +
                 ", eventName='" + eventName + '\'' +
                 ", eventDate=" + eventDate +
                 ", blood_type=" + blood_type +
+                ", units=" + units +
                 ", users=" + users +
                 '}';
     }

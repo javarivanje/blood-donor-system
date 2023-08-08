@@ -1,4 +1,4 @@
-package com.bds.blood_donations;
+package com.bds.BloodDonations;
 
 
 import com.bds.user.Users;
@@ -16,7 +16,7 @@ import java.util.Objects;
                         columnNames = {"donor_id", "donation_date"})
         }
 )
-public class blood_donations {
+public class BloodDonations {
 
     @Id
     @SequenceGenerator(
@@ -68,10 +68,10 @@ public class blood_donations {
     )
     private Users admin;
 
-    public blood_donations() {
+    public BloodDonations() {
     }
 
-    public blood_donations(Long id, Integer units, LocalDate donationDate, Users donor, Users admin) {
+    public BloodDonations(Long id, Integer units, LocalDate donationDate, Users donor, Users admin) {
         Id = id;
         this.units = units;
         this.donationDate = donationDate;
@@ -123,7 +123,7 @@ public class blood_donations {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        blood_donations that = (blood_donations) o;
+        BloodDonations that = (BloodDonations) o;
         return Objects.equals(Id, that.Id) && Objects.equals(units, that.units) && Objects.equals(donationDate, that.donationDate) && Objects.equals(donor, that.donor) && Objects.equals(admin, that.admin);
     }
 

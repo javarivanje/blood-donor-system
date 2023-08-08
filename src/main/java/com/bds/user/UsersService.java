@@ -1,6 +1,7 @@
 package com.bds.user;
 
 import com.bds.exception.DuplicateResourceException;
+import com.bds.exception.RequestValidationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,21 +21,22 @@ public class UsersService {
         return usersRepository.findByRoleIs(role);
     }
 
-    public void registerNewUser(UsersRegistrationRequest request) {
-        String email = request.email();
+    public void registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
+
+        String email = usersRegistrationRequest.email();
         if (usersRepository.existsUsersByEmail(email)) {
             throw new DuplicateResourceException(
                     "email already taken"
             );
         }
-
-        Users users = new Users(
-                request.firstName(),
-                request.lastName(),
-                request.email(),
-                request.role(),
-                request.bloodType());
-
-        usersRepository.save(users);
+        usersRepository.save(
+                new Users(
+                    usersRegistrationRequest.firstName(),
+                    usersRegistrationRequest.lastName(),
+                    usersRegistrationRequest.email(),
+                    usersRegistrationRequest.role(),
+                    usersRegistrationRequest.bloodType()
+                )
+        );
     }
 }
