@@ -1,7 +1,6 @@
 package com.bds.BloodDonationEvent;
 
 import com.bds.exception.RequestValidationException;
-import com.bds.user.Users;
 import com.bds.user.UsersRepository;
 import org.springframework.stereotype.Service;
 

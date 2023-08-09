@@ -72,7 +72,7 @@ public class BloodDonations {
     }
 
     public BloodDonations(Long id, Integer units, LocalDate donationDate, Users donor, Users admin) {
-        Id = id;
+        this.Id = id;
         this.units = units;
         this.donationDate = donationDate;
         this.donor = donor;
