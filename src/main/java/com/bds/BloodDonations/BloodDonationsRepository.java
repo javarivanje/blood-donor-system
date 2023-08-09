@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface BloodDonationsRepository extends JpaRepository<BloodDonations, Long> {
 
-    @Query(value = "SELECT new com.bds.BloodDonations.BloodUnitsCount(u.bloodType, SUM(bd.units)) AS bloodUnits"
-            + " FROM blood_donations bd, users u WHERE bd.donor.id = u.id GROUP BY u.bloodType")
-    List<BloodUnitsCount>  countTotalUnitsByBloodType();
+    @Query("SELECT u.bloodType AS bloodType, SUM(bd.units) AS totalUnits "
+            + "FROM blood_donations bd, users u WHERE bd.donor.id = u.id GROUP BY u.bloodType ORDER BY ASC")
+    List<BloodUnits> countTotalUnitsByBloodType();
 }

@@ -17,7 +17,7 @@ public class BloodDonationsController {
     }
 
     @GetMapping("/admin/available_blood_units")
-    public List<BloodUnitsCount> countTotalUnitsByBloodType() {
+    public List<BloodUnits> countTotalUnitsByBloodType() {
         return bloodDonationsService.countTotalUnitsByBloodType();
     }
 }

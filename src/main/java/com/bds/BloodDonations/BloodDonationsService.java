@@ -13,7 +13,7 @@ public class BloodDonationsService {
         this.bloodDonationsRepository = bloodDonationsRepository;
     }
 
-    public List<BloodUnitsCount> countTotalUnitsByBloodType() {
+    public List<BloodUnits> countTotalUnitsByBloodType() {
         return bloodDonationsRepository.countTotalUnitsByBloodType();
     }
 }
