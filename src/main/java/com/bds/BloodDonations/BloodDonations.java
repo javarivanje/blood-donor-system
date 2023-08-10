@@ -60,7 +60,6 @@ public class BloodDonations {
     @ManyToOne
     @JoinColumn(
             name = "admin_id",
-            nullable = false,
             referencedColumnName = "id",
             foreignKey = @ForeignKey(
                     name = "fk_admin_id"
@@ -73,6 +72,13 @@ public class BloodDonations {
 
     public BloodDonations(Long id, Integer units, LocalDate donationDate, Users donor, Users admin) {
         this.Id = id;
+        this.units = units;
+        this.donationDate = donationDate;
+        this.donor = donor;
+        this.admin = admin;
+    }
+
+    public BloodDonations(Integer units, LocalDate donationDate, Users donor, Users admin) {
         this.units = units;
         this.donationDate = donationDate;
         this.donor = donor;
