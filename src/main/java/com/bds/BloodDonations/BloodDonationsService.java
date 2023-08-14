@@ -41,9 +41,8 @@ public class BloodDonationsService {
 
     }
 
-    public void confirmBloodDonation(ConfirmDonationRequest confirmDonationRequest) {
+    public void confirmBloodDonation(Long donationId, ConfirmDonationRequest confirmDonationRequest) {
 
-        Long donationId = confirmDonationRequest.donationId();
         Boolean bloodDonationExists = bloodDonationsRepository.existsBloodDonationsByDonationId(donationId);
 
         if (!bloodDonationExists) {
@@ -60,5 +59,27 @@ public class BloodDonationsService {
 
         donation.setUnits(confirmUnits);
 
+    }
+
+    public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {
+
+        if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
+                initiateBloodDonationRequest.donor().getId(),
+                        initiateBloodDonationRequest.donationDate()
+        )) {
+            throw new DuplicateResourceException("donor or donation date already exists");
+        }
+
+        bloodDonationsRepository.save(
+                new BloodDonations(
+                        initiateBloodDonationRequest.units(),
+                        initiateBloodDonationRequest.donationDate(),
+                        initiateBloodDonationRequest.donor()
+                )
+        );
+    }
+
+    public List<BloodDonations> getBloodDonations(Long donorId) {
+        return bloodDonationsRepository.findByDonorId(donorId);
     }
 }

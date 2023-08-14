@@ -26,4 +26,7 @@ public interface BloodDonationsRepository extends JpaRepository<BloodDonations, 
 
     @Query(value = "SELECT bd.units FROM blood_donations bd WHERE bd.id = :donationId")
     Integer findUnitsByDonationId(@Param("donationId") Long donationId);
+
+    @Query(value = "SELECT bd FROM blood_donations bd WHERE bd.donor.id = ?1")
+    List<BloodDonations> findByDonorId(Long donorId);
 }

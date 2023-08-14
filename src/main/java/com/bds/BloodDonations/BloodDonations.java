@@ -85,6 +85,12 @@ public class BloodDonations {
         this.admin = admin;
     }
 
+    public BloodDonations(Integer units, LocalDate donationDate, Users donor) {
+        this.units = units;
+        this.donationDate = donationDate;
+        this.donor = donor;
+    }
+
     public Long getId() {
         return Id;
     }
