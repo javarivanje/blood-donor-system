@@ -17,11 +17,11 @@ public class BloodDonationsService {
         this.bloodDonationsRepository = bloodDonationsRepository;
     }
 
-    public List<BloodUnits> countTotalUnitsByBloodType() {
-        return bloodDonationsRepository.countTotalUnitsByBloodType();
+    public List<BloodUnits> countAvailableUnitsByBloodType() {
+        return bloodDonationsRepository.countAvailableUnitsByBloodType();
     }
 
-    public void addBloodDonation(BloodDonationRequest bloodDonationRequest) {
+    public BloodDonations addBloodDonation(BloodDonationRequest bloodDonationRequest) {
 
         if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
                 bloodDonationRequest.donor().getId(),
@@ -30,18 +30,20 @@ public class BloodDonationsService {
             throw new DuplicateResourceException("donor or donation date already exists");
         }
 
-        bloodDonationsRepository.save(
-                new BloodDonations(
-                        bloodDonationRequest.units(),
-                        bloodDonationRequest.donationDate(),
-                        bloodDonationRequest.donor(),
-                        bloodDonationRequest.admin()
-                )
+        BloodDonations newDonation = new BloodDonations(
+                bloodDonationRequest.units(),
+                bloodDonationRequest.donationDate(),
+                bloodDonationRequest.donor(),
+                bloodDonationRequest.admin()
         );
+        bloodDonationsRepository.save(newDonation);
+
+        return newDonation;
 
     }
 
     public void confirmBloodDonation(Long donationId, ConfirmDonationRequest confirmDonationRequest) {
+
 
         Boolean bloodDonationExists = bloodDonationsRepository.existsBloodDonationsByDonationId(donationId);
 
@@ -81,5 +83,17 @@ public class BloodDonationsService {
 
     public List<BloodDonations> getBloodDonations(Long donorId) {
         return bloodDonationsRepository.findByDonorId(donorId);
+    }
+
+    public void donorBloodDonationRequest(DonorBloodDonationRequest donorBloodDonationRequest) {
+
+
+        bloodDonationsRepository.save(
+                new BloodDonations(
+                        donorBloodDonationRequest.units(),
+                        donorBloodDonationRequest.donationDate(),
+                        donorBloodDonationRequest.donor())
+                );
+
     }
 }

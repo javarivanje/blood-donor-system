@@ -21,7 +21,7 @@ public class UsersService {
         return usersRepository.findByRoleIs(role);
     }
 
-    public void registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
+    public Users registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
 
         String email = usersRegistrationRequest.email();
         if (usersRepository.existsUsersByEmail(email)) {
@@ -29,14 +29,14 @@ public class UsersService {
                     "email already taken"
             );
         }
-        usersRepository.save(
-                new Users(
-                    usersRegistrationRequest.firstName(),
-                    usersRegistrationRequest.lastName(),
-                    usersRegistrationRequest.email(),
-                    usersRegistrationRequest.role(),
-                    usersRegistrationRequest.bloodType()
-                )
+        Users newUser = new Users(
+                usersRegistrationRequest.firstName(),
+                usersRegistrationRequest.lastName(),
+                usersRegistrationRequest.email(),
+                usersRegistrationRequest.role(),
+                usersRegistrationRequest.bloodType()
         );
+        usersRepository.save(newUser);
+        return newUser;
     }
 }

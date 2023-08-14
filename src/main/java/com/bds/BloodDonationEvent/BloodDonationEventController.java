@@ -1,6 +1,10 @@
 package com.bds.BloodDonationEvent;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.http.HttpResponse;
 
 @RestController
 @RequestMapping("api/v1/admin")
@@ -13,9 +17,11 @@ public class BloodDonationEventController {
     }
 
     @PostMapping("donation_event")
-    public void addBloodDonationEvent(
+    public ResponseEntity<BloodDonationEvent> addBloodDonationEvent(
             @RequestBody BloodDonationEventRequest bloodDonationEventRequest) {
-        bloodDonationEventService.addBloodDonationEvent(bloodDonationEventRequest);
+        return new ResponseEntity(
+                bloodDonationEventService.addBloodDonationEvent(bloodDonationEventRequest),
+                HttpStatus.CREATED);
     }
 
 }

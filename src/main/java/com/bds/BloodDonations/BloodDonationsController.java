@@ -1,12 +1,13 @@
 package com.bds.BloodDonations;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/")
+@RequestMapping("api/v1")
 public class BloodDonationsController {
 
     private final BloodDonationsService bloodDonationsService;
@@ -16,13 +17,19 @@ public class BloodDonationsController {
     }
 
     @GetMapping("/admin/available_blood_units")
-    public List<BloodUnits> countTotalUnitsByBloodType() {
-        return bloodDonationsService.countTotalUnitsByBloodType();
+    public ResponseEntity<List<BloodUnits>> countAvailableUnitsByBloodType() {
+
+        return new ResponseEntity<>(bloodDonationsService.countAvailableUnitsByBloodType(),
+                HttpStatus.OK);
     }
 
-    @PostMapping("admin/enter_donation")
-    public void addBloodDonation(@RequestBody BloodDonationRequest bloodDonationRequest) {
-        bloodDonationsService.addBloodDonation(bloodDonationRequest);
+    @PostMapping("/admin/enter_donation")
+    public ResponseEntity<BloodDonations> addBloodDonation(
+            @RequestBody BloodDonationRequest bloodDonationRequest) {
+
+        return new ResponseEntity<>(
+                bloodDonationsService.addBloodDonation(bloodDonationRequest),
+                HttpStatus.CREATED);
     }
 
     @PatchMapping("/admin/confirm_blood_donation/{donationId}")

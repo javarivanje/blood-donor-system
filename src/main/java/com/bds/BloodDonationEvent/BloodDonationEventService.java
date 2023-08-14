@@ -15,21 +15,21 @@ public class BloodDonationEventService {
         this.usersRepository = usersRepository;
     }
 
-    public void addBloodDonationEvent(BloodDonationEventRequest bloodDonationEventRequest) {
+    public BloodDonationEvent addBloodDonationEvent(BloodDonationEventRequest bloodDonationEventRequest) {
 
         Long id = bloodDonationEventRequest.users().getId();
         if(!usersRepository.existsById(id)) {
             throw new RequestValidationException("user with " + id + " does not exists");
         }
 
-        bloodDonationEventRepository.save(
-                new BloodDonationEvent(
-                        bloodDonationEventRequest.eventName(),
-                        bloodDonationEventRequest.eventDate(),
-                        bloodDonationEventRequest.bloodType(),
-                        bloodDonationEventRequest.units(),
-                        bloodDonationEventRequest.users()
-                )
-        );
+        BloodDonationEvent newEvent = new BloodDonationEvent(
+                bloodDonationEventRequest.eventName(),
+                bloodDonationEventRequest.eventDate(),
+                bloodDonationEventRequest.bloodType(),
+                bloodDonationEventRequest.units(),
+                bloodDonationEventRequest.users());
+
+        bloodDonationEventRepository.save(newEvent);
+        return newEvent;
     }
 }

@@ -14,7 +14,7 @@ public interface BloodDonationsRepository extends JpaRepository<BloodDonations, 
 
     @Query(value = "SELECT u.bloodType AS bloodType, SUM(bd.units) AS totalUnits "
             + "FROM blood_donations bd, users u WHERE bd.donor.id = u.id GROUP BY u.bloodType")
-    List<BloodUnits> countTotalUnitsByBloodType();
+    List<BloodUnits> countAvailableUnitsByBloodType();
 
     @Query(value = "SELECT count(bd.donor.id) = 1 FROM blood_donations bd WHERE bd.donor.id = :donorId "
            + "AND bd.donationDate = :donationDate")

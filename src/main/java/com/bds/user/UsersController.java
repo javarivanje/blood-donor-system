@@ -1,6 +1,9 @@
 package com.bds.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -18,12 +21,12 @@ public class UsersController {
     }
 
     @GetMapping("/donor")
-    public List<Users> getAllDonors() {
-        return usersService.getAllDonors();
+    public ResponseEntity<List<Users>> getAllDonors() {
+        return new ResponseEntity<>(usersService.getAllDonors(), HttpStatus.OK);
     }
 
     @PostMapping("/register_user")
-    public void registerNewUser(@RequestBody UsersRegistrationRequest request) {
-        usersService.registerNewUser(request);
+    public ResponseEntity<Users> registerNewUser(@RequestBody UsersRegistrationRequest request) {
+        return new ResponseEntity<>(usersService.registerNewUser(request), HttpStatus.CREATED);
     }
 }
