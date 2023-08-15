@@ -1,19 +1,20 @@
 package com.bds.user;
 
 import com.bds.exception.DuplicateResourceException;
-import com.bds.exception.RequestValidationException;
+import com.bds.validators.ObjectsValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class UsersService {
 
     private final UsersRepository usersRepository;
+    private final ObjectsValidator<UsersRegistrationRequest> validator;
 
-    public UsersService(UsersRepository usersRepository) {
+    public UsersService(UsersRepository usersRepository, ObjectsValidator<UsersRegistrationRequest> validator) {
         this.usersRepository = usersRepository;
+        this.validator = validator;
     }
 
     public List<Users> getAllDonors() {
@@ -22,6 +23,7 @@ public class UsersService {
     }
 
     public Users registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
+        validator.validate(usersRegistrationRequest);
 
         String email = usersRegistrationRequest.email();
         if (usersRepository.existsUsersByEmail(email)) {
