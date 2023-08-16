@@ -1,6 +1,11 @@
-package com.bds.user;
+package com.bds.services;
 
+import com.bds.dto.UsersRegistrationRequest;
 import com.bds.exception.DuplicateResourceException;
+import com.bds.models.BloodType;
+import com.bds.models.Role;
+import com.bds.models.Users;
+import com.bds.repositories.UsersRepository;
 import com.bds.validators.ObjectsValidator;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +36,13 @@ public class UsersService {
                     "email already taken"
             );
         }
+
         Users newUser = new Users(
                 usersRegistrationRequest.firstName(),
                 usersRegistrationRequest.lastName(),
                 usersRegistrationRequest.email(),
-                usersRegistrationRequest.role(),
-                usersRegistrationRequest.bloodType()
+                Role.valueOf(usersRegistrationRequest.role()),
+                BloodType.valueOf(usersRegistrationRequest.bloodType())
         );
         usersRepository.save(newUser);
         return newUser;

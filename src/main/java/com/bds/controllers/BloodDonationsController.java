@@ -1,5 +1,11 @@
-package com.bds.BloodDonations;
+package com.bds.controllers;
 
+import com.bds.dto.BloodDonationRequest;
+import com.bds.dto.BloodUnits;
+import com.bds.dto.ConfirmDonationRequest;
+import com.bds.dto.InitiateBloodDonationRequest;
+import com.bds.models.BloodDonations;
+import com.bds.services.BloodDonationsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +42,7 @@ public class BloodDonationsController {
     public void confirmBloodDonation(
             @PathVariable("donationId") Long donationId,
             @RequestBody ConfirmDonationRequest confirmDonationRequest) {
-            bloodDonationsService.confirmBloodDonation(donationId, confirmDonationRequest);
+        bloodDonationsService.confirmBloodDonation(donationId, confirmDonationRequest);
     }
 
     @PostMapping("/donor/initiate_blood_donation")

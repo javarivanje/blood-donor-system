@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 @ControllerAdvice
 public class ApiExceptionHandler {
@@ -16,8 +17,7 @@ public class ApiExceptionHandler {
     ) {
 
         ApiException apiException = new ApiException(
-                e.getMessage(),
-                e,
+                Set.of(e.getMessage()),
                 HttpStatus.CONFLICT,
                 ZonedDateTime.now()
         );
@@ -32,8 +32,7 @@ public class ApiExceptionHandler {
             RequestValidationException e
     ) {
         ApiException apiException = new ApiException(
-                e.getMessage(),
-                e,
+                Set.of(e.getMessage()),
                 HttpStatus.NOT_ACCEPTABLE,
                 ZonedDateTime.now()
         );
@@ -48,8 +47,7 @@ public class ApiExceptionHandler {
             ResourceNotFoundException e
     ) {
         ApiException apiException = new ApiException(
-                e.getMessage(),
-                e,
+                Set.of(e.getMessage()),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
@@ -63,10 +61,8 @@ public class ApiExceptionHandler {
     public ResponseEntity<?> handleException(
             ObjectNotValidException e
     ) {
-
         ApiException apiException = new ApiException(
-                e.getMessage(),
-                e,
+                e.getErrorMessages(),
                 HttpStatus.NOT_ACCEPTABLE,
                 ZonedDateTime.now()
         );

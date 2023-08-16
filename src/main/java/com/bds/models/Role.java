@@ -1,4 +1,4 @@
-package com.bds.user;
+package com.bds.models;
 
 public enum Role {
     ADMIN,

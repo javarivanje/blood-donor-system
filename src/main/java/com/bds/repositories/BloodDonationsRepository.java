@@ -1,6 +1,7 @@
-package com.bds.BloodDonations;
+package com.bds.repositories;
 
-import com.bds.user.Users;
+import com.bds.dto.BloodUnits;
+import com.bds.models.BloodDonations;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,7 +18,7 @@ public interface BloodDonationsRepository extends JpaRepository<BloodDonations, 
     List<BloodUnits> countAvailableUnitsByBloodType();
 
     @Query(value = "SELECT count(bd.donor.id) = 1 FROM blood_donations bd WHERE bd.donor.id = :donorId "
-           + "AND bd.donationDate = :donationDate")
+            + "AND bd.donationDate = :donationDate")
     boolean existsBloodDonationsByDonorAndDonationDate(@Param("donorId") Long id,
                                                        @Param("donationDate") LocalDate donationDate);
 

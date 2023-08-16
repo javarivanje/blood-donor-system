@@ -1,10 +1,7 @@
-package com.bds.BloodDonationEvent;
+package com.bds.models;
 
 
-import com.bds.user.BloodType;
-import com.bds.user.Users;
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.Objects;
 

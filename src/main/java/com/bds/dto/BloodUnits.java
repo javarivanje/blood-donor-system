@@ -1,9 +1,10 @@
-package com.bds.BloodDonations;
+package com.bds.dto;
 
-import com.bds.user.BloodType;
+import com.bds.models.BloodType;
 
 public interface BloodUnits {
 
     BloodType getBloodType();
+
     Integer getTotalUnits();
 }

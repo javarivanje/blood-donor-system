@@ -3,7 +3,7 @@ package com.bds.exception;
 import java.util.Objects;
 import java.util.Set;
 
-public class ObjectNotValidException extends RuntimeException{
+public class ObjectNotValidException extends RuntimeException {
 
     private final Set<String> errorMessages;
 

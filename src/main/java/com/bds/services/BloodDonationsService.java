@@ -1,12 +1,14 @@
-package com.bds.BloodDonations;
+package com.bds.services;
 
+import com.bds.dto.*;
 import com.bds.exception.DuplicateResourceException;
 import com.bds.exception.RequestValidationException;
 import com.bds.exception.ResourceNotFoundException;
+import com.bds.models.BloodDonations;
+import com.bds.repositories.BloodDonationsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BloodDonationsService {
@@ -67,7 +69,7 @@ public class BloodDonationsService {
 
         if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
                 initiateBloodDonationRequest.donor().getId(),
-                        initiateBloodDonationRequest.donationDate()
+                initiateBloodDonationRequest.donationDate()
         )) {
             throw new DuplicateResourceException("donor or donation date already exists");
         }
@@ -86,14 +88,12 @@ public class BloodDonationsService {
     }
 
     public void donorBloodDonationRequest(DonorBloodDonationRequest donorBloodDonationRequest) {
-
-
         bloodDonationsRepository.save(
                 new BloodDonations(
                         donorBloodDonationRequest.units(),
                         donorBloodDonationRequest.donationDate(),
                         donorBloodDonationRequest.donor())
-                );
+        );
 
     }
 }

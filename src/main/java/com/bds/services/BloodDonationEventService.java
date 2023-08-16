@@ -1,7 +1,11 @@
-package com.bds.BloodDonationEvent;
+package com.bds.services;
 
+import com.bds.dto.BloodDonationEventRequest;
 import com.bds.exception.RequestValidationException;
-import com.bds.user.UsersRepository;
+import com.bds.models.BloodDonationEvent;
+import com.bds.models.BloodType;
+import com.bds.repositories.BloodDonationEventRepository;
+import com.bds.repositories.UsersRepository;
 import com.bds.validators.ObjectsValidator;
 import org.springframework.stereotype.Service;
 
@@ -22,14 +26,14 @@ public class BloodDonationEventService {
         validator.validate(bloodDonationEventRequest);
 
         Long id = bloodDonationEventRequest.users().getId();
-        if(!usersRepository.existsById(id)) {
+        if (!usersRepository.existsById(id)) {
             throw new RequestValidationException("user with " + id + " does not exists");
         }
 
         BloodDonationEvent newEvent = new BloodDonationEvent(
                 bloodDonationEventRequest.eventName(),
                 bloodDonationEventRequest.eventDate(),
-                bloodDonationEventRequest.bloodType(),
+                BloodType.valueOf(bloodDonationEventRequest.bloodType()),
                 bloodDonationEventRequest.units(),
                 bloodDonationEventRequest.users());
 

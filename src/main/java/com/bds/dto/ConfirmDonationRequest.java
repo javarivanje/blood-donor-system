@@ -1,4 +1,4 @@
-package com.bds.BloodDonations;
+package com.bds.dto;
 
 public record ConfirmDonationRequest(
         Long adminId,

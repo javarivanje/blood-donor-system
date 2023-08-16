@@ -1,8 +1,7 @@
-package com.bds.user;
+package com.bds.models;
 
 
 import jakarta.persistence.*;
-
 import java.util.Objects;
 
 @Entity(name = "users")

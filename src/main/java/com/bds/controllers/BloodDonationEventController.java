@@ -1,10 +1,14 @@
-package com.bds.BloodDonationEvent;
+package com.bds.controllers;
 
+import com.bds.dto.BloodDonationEventRequest;
+import com.bds.models.BloodDonationEvent;
+import com.bds.services.BloodDonationEventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.http.HttpResponse;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("api/v1/admin")
