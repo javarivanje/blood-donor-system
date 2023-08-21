@@ -6,7 +6,7 @@ import com.bds.models.BloodType;
 import com.bds.models.Role;
 import com.bds.models.Users;
 import com.bds.repositories.UsersRepository;
-import com.bds.validators.ObjectsValidator;
+import com.bds.validators.DtoValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,9 +15,9 @@ import java.util.List;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final ObjectsValidator<UsersRegistrationRequest> validator;
+    private final DtoValidator<UsersRegistrationRequest> validator;
 
-    public UsersService(UsersRepository usersRepository, ObjectsValidator<UsersRegistrationRequest> validator) {
+    public UsersService(UsersRepository usersRepository, DtoValidator<UsersRegistrationRequest> validator) {
         this.usersRepository = usersRepository;
         this.validator = validator;
     }

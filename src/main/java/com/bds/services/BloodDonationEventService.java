@@ -6,7 +6,7 @@ import com.bds.models.BloodDonationEvent;
 import com.bds.models.BloodType;
 import com.bds.repositories.BloodDonationEventRepository;
 import com.bds.repositories.UsersRepository;
-import com.bds.validators.ObjectsValidator;
+import com.bds.validators.DtoValidator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -14,9 +14,9 @@ public class BloodDonationEventService {
 
     private final BloodDonationEventRepository bloodDonationEventRepository;
     private final UsersRepository usersRepository;
-    private final ObjectsValidator<BloodDonationEventRequest> validator;
+    private final DtoValidator<BloodDonationEventRequest> validator;
 
-    public BloodDonationEventService(BloodDonationEventRepository bloodDonationEventRepository, UsersRepository usersRepository, ObjectsValidator<BloodDonationEventRequest> validator) {
+    public BloodDonationEventService(BloodDonationEventRepository bloodDonationEventRepository, UsersRepository usersRepository, DtoValidator<BloodDonationEventRequest> validator) {
         this.bloodDonationEventRepository = bloodDonationEventRepository;
         this.usersRepository = usersRepository;
         this.validator = validator;
