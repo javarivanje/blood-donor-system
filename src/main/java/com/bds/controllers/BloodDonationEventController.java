@@ -5,6 +5,7 @@ import com.bds.models.BloodDonationEvent;
 import com.bds.services.BloodDonationEventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,7 @@ public class BloodDonationEventController {
     }
 
     @PostMapping("donation_event")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BloodDonationEvent> addBloodDonationEvent(
             @RequestBody BloodDonationEventRequest bloodDonationEventRequest) {
         return new ResponseEntity(

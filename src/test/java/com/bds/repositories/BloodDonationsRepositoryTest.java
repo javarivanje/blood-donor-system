@@ -26,8 +26,6 @@ class BloodDonationsRepositoryTest extends AbstractTestcontainers {
     private BloodDonationsRepository underTest;
     @Autowired
     private UsersRepository usersRepository;
-    @Autowired
-    ApplicationContext applicationContext;
 
     @BeforeEach
     void setUp() {

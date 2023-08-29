@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -71,5 +72,25 @@ class UsersRepositoryTest extends AbstractTestcontainers {
 
         // Then
         assertThat(exists).isTrue();
+    }
+
+    @Test
+    void findUsersByEmail() {
+        // Given
+        String email = "milos.bacetic@gmail.com";
+        Users users = new Users(
+                "milos",
+                "bacetic",
+                email,
+                Role.ADMIN,
+                BloodType.APos
+        );
+        underTest.save(users);
+
+        // When
+        Optional<Users> milos = underTest.findUsersByEmail(email);
+
+        // Then
+        assertThat(milos.get().getEmail()).isEqualTo(email);
     }
 }

@@ -2,6 +2,7 @@ package com.bds.services;
 
 import com.bds.dto.UsersRegistrationRequest;
 import com.bds.exception.DuplicateResourceException;
+import com.bds.exception.ResourceNotFoundException;
 import com.bds.models.BloodType;
 import com.bds.models.Role;
 import com.bds.models.Users;
@@ -10,6 +11,7 @@ import com.bds.validators.DtoValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsersService {
@@ -46,5 +48,14 @@ public class UsersService {
         );
         usersRepository.save(newUser);
         return newUser;
+    }
+
+    public Users findUserByEmail(String email) {
+        if(!usersRepository.existsUsersByEmail(email)) {
+            throw new ResourceNotFoundException(
+                    "user does not exists"
+            );
+        }
+        return usersRepository.findUsersByEmail(email);
     }
 }

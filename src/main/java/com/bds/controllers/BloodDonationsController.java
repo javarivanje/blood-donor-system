@@ -8,6 +8,7 @@ import com.bds.models.BloodDonations;
 import com.bds.services.BloodDonationsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public class BloodDonationsController {
     }
 
     @GetMapping("/admin/available_blood_units")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<BloodUnits>> countAvailableUnitsByBloodType() {
 
         return new ResponseEntity<>(bloodDonationsService.countAvailableUnitsByBloodType(),
@@ -30,6 +32,7 @@ public class BloodDonationsController {
     }
 
     @PostMapping("/admin/enter_donation")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<BloodDonations> addBloodDonation(
             @RequestBody BloodDonationRequest bloodDonationRequest) {
 
@@ -39,6 +42,7 @@ public class BloodDonationsController {
     }
 
     @PatchMapping("/admin/confirm_blood_donation/{donationId}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void confirmBloodDonation(
             @PathVariable("donationId") Long donationId,
             @RequestBody ConfirmDonationRequest confirmDonationRequest) {
@@ -46,12 +50,15 @@ public class BloodDonationsController {
     }
 
     @PostMapping("/donor/initiate_blood_donation")
+    @PreAuthorize("hasRole('DONOR')")
     public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {
         bloodDonationsService.initiateBloodDonation(initiateBloodDonationRequest);
     }
 
-    @GetMapping("/donor/my_blood_donations")
-    public List<BloodDonations> getDonorBloodDonations(Long donorId) {
+    @GetMapping("/donor/my_blood_donations/{donorId}")
+    @PreAuthorize("hasRole('DONOR')")
+    public List<BloodDonations> getDonorBloodDonations(
+            @PathVariable("donorId") Long donorId) {
         return bloodDonationsService.getBloodDonations(donorId);
     }
 

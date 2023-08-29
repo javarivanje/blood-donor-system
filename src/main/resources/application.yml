@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
   error:
     include-message: always
 
@@ -18,3 +18,16 @@ spring:
     show-sql: true
   main:
     web-application-type: servlet
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/Milos
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: blood-donor-system-rest-api
+      principle-attribute: email\x
