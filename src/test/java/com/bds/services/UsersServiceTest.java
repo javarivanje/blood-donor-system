@@ -13,12 +13,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 
@@ -129,7 +130,7 @@ class UsersServiceTest {
                 .isInstanceOf(DuplicateResourceException.class)
                 .hasMessageContaining("email already taken");
 
-        verify(usersRepository, Mockito.never()).save(Mockito.any());
+        verify(usersRepository, never()).save(any());
     }
 
     @Test
@@ -148,7 +149,15 @@ class UsersServiceTest {
         underTest.findUserByEmail(email);
 
         // Then
-        verify(usersRepository).findUsersByEmail(email);
+        ArgumentCaptor<String> checkEmail =
+                ArgumentCaptor.forClass(String.class);
+
+        verify(usersRepository)
+                .findUsersByEmail(checkEmail.capture());
+
+        String capturedEmail = checkEmail.getValue();
+
+        assertThat(capturedEmail).isEqualTo(email);
     }
 
     @Test
@@ -171,5 +180,7 @@ class UsersServiceTest {
         assertThatThrownBy(() -> underTest.findUserByEmail(email))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("user does not exists");
+
+        verify(usersRepository, never()).save(any());
     }
 }

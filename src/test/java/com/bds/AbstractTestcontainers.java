@@ -1,6 +1,5 @@
 package com.bds;
 
-import com.github.javafaker.Faker;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.test.context.DynamicPropertyRegistry;

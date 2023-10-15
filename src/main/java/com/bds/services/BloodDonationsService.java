@@ -27,8 +27,8 @@ public class BloodDonationsService {
 
         if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
                 bloodDonationRequest.donor().getId(),
-                bloodDonationRequest.donationDate()
-        )) {
+                bloodDonationRequest.donationDate())
+        ) {
             throw new DuplicateResourceException("donor or donation date already exists");
         }
 
@@ -45,21 +45,22 @@ public class BloodDonationsService {
 
     public void confirmBloodDonation(Long donationId, ConfirmDonationRequest confirmDonationRequest) {
 
-        Boolean bloodDonationExists = bloodDonationsRepository.existsBloodDonationsByDonationId(donationId);
+            BloodDonations savedBloodDonations = bloodDonationsRepository.findById(donationId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "donation id does not exists"
+                    ));
 
-        if (!bloodDonationExists) {
-            throw new ResourceNotFoundException("donation id does not exists");
-        }
 
-        BloodDonations donation = bloodDonationsRepository.getById(donationId);
+            if (!bloodDonationsRepository.findUnitsByDonationId(donationId)
+                    .equals(confirmDonationRequest.units())) {
+                throw new RequestValidationException(
+                        "confirmed units does not match DONOR units"
+                );
+            }
 
-        Integer confirmUnits = confirmDonationRequest.units();
-        Integer units = bloodDonationsRepository.findUnitsByDonationId(donationId);
-        if (confirmUnits != units) {
-            throw new RequestValidationException("confirmed units does not match DONOR units");
-        }
+            bloodDonationsRepository
+                    .save(savedBloodDonations);
 
-        donation.setUnits(confirmUnits);
     }
 
     public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {
