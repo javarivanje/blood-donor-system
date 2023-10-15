@@ -41,11 +41,9 @@ public class BloodDonationsService {
         bloodDonationsRepository.save(newDonation);
 
         return newDonation;
-
     }
 
     public void confirmBloodDonation(Long donationId, ConfirmDonationRequest confirmDonationRequest) {
-
 
         Boolean bloodDonationExists = bloodDonationsRepository.existsBloodDonationsByDonationId(donationId);
 
@@ -62,7 +60,6 @@ public class BloodDonationsService {
         }
 
         donation.setUnits(confirmUnits);
-
     }
 
     public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {
@@ -94,6 +91,5 @@ public class BloodDonationsService {
                         donorBloodDonationRequest.donationDate(),
                         donorBloodDonationRequest.donor())
         );
-
     }
 }

@@ -30,13 +30,15 @@ public class UsersService {
     }
 
     public Users registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
-        validator.validate(usersRegistrationRequest);
+        boolean validated = validator.validate(usersRegistrationRequest);
 
-        String email = usersRegistrationRequest.email();
-        if (usersRepository.existsUsersByEmail(email)) {
-            throw new DuplicateResourceException(
-                    "email already taken"
-            );
+        if (validated) {
+            String email = usersRegistrationRequest.email();
+            if (usersRepository.existsUsersByEmail(email)) {
+                throw new DuplicateResourceException(
+                        "email already taken"
+                );
+            }
         }
 
         Users newUser = new Users(
@@ -51,7 +53,7 @@ public class UsersService {
     }
 
     public Users findUserByEmail(String email) {
-        if(!usersRepository.existsUsersByEmail(email)) {
+        if(usersRepository.existsUsersByEmail(email)) {
             throw new ResourceNotFoundException(
                     "user does not exists"
             );

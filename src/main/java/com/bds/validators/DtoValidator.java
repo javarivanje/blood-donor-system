@@ -15,7 +15,7 @@ public class DtoValidator<T> {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
-    public void validate(T requestToValidate) {
+    public boolean validate(T requestToValidate) {
         Set<ConstraintViolation<T>> violations = validator.validate(requestToValidate);
         if (!violations.isEmpty()) {
             var errorMessages = violations
@@ -24,5 +24,6 @@ public class DtoValidator<T> {
                 .collect(Collectors.toSet());
             throw new ObjectNotValidException(errorMessages);
         }
+        return true;
     }
 }

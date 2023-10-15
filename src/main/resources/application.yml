@@ -30,4 +30,4 @@ jwt:
   auth:
     converter:
       resource-id: blood-donor-system-rest-api
-      principle-attribute: email\x
+      principle-attribute: email

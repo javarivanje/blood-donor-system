@@ -88,9 +88,9 @@ class UsersRepositoryTest extends AbstractTestcontainers {
         underTest.save(users);
 
         // When
-        Optional<Users> milos = underTest.findUsersByEmail(email);
+        Users milos = underTest.findUsersByEmail(email);
 
         // Then
-        assertThat(milos.get().getEmail()).isEqualTo(email);
+        assertThat(milos.getEmail()).isEqualTo(email);
     }
 }
