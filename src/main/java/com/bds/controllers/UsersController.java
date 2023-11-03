@@ -26,6 +26,11 @@ public class UsersController {
         return new ResponseEntity<>(usersService.getAllDonors(), HttpStatus.OK);
     }
 
+    @GetMapping()
+    public ResponseEntity<List<Users>> getAllAdmins() {
+        return new ResponseEntity<>(usersService.getAllAdmins(), HttpStatus.OK);
+    }
+
     @PostMapping("/register_user")
     public ResponseEntity<?> registerNewUser(@RequestBody UsersRegistrationRequest request) {
         return new ResponseEntity<>(usersService.registerNewUser(request), HttpStatus.CREATED);

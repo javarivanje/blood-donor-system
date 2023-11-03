@@ -5,6 +5,7 @@ import com.bds.exception.DuplicateResourceException;
 import com.bds.exception.RequestValidationException;
 import com.bds.exception.ResourceNotFoundException;
 import com.bds.models.BloodDonations;
+import com.bds.dto.BloodUnits;
 import com.bds.repositories.BloodDonationsRepository;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,6 @@ public class BloodDonationsService {
                             "donation id does not exists"
                     ));
 
-
             if (!bloodDonationsRepository.findUnitsByDonationId(donationId)
                     .equals(confirmDonationRequest.units())) {
                 throw new RequestValidationException(
@@ -60,7 +60,6 @@ public class BloodDonationsService {
 
             bloodDonationsRepository
                     .save(savedBloodDonations);
-
     }
 
     public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {

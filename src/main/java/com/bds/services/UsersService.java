@@ -28,6 +28,11 @@ public class UsersService {
         return usersRepository.findByRoleIs(role);
     }
 
+    public List<Users> getAllAdmins() {
+        Role role = Role.ADMIN;
+        return usersRepository.findByRoleIs(role);
+    }
+
     public Users registerNewUser(UsersRegistrationRequest usersRegistrationRequest) {
         boolean validated = validator.validate(usersRegistrationRequest);
 
@@ -52,7 +57,7 @@ public class UsersService {
     }
 
     public Users findUserByEmail(String email) {
-        if(usersRepository.existsUsersByEmail(email)) {
+        if(!usersRepository.existsUsersByEmail(email)) {
             throw new ResourceNotFoundException(
                     "user does not exists"
             );

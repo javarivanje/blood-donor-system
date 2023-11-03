@@ -145,6 +145,7 @@ class UsersServiceTest {
                 BloodType.APos
         );
 
+        given(usersRepository.existsUsersByEmail(email)).willReturn(true);
         // When
         underTest.findUserByEmail(email);
 
@@ -173,7 +174,7 @@ class UsersServiceTest {
         );
 
         given(usersRepository.existsUsersByEmail(email))
-                .willReturn(true);
+                .willReturn(false);
 
         // When
         // Then
