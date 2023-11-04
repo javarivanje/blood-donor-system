@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class DtoValidator<T> {
+public class DtoValidator<Object> {
 
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
-    public boolean validate(T requestToValidate) {
-        Set<ConstraintViolation<T>> violations = validator.validate(requestToValidate);
+    public boolean validate(Object requestToValidate) {
+        Set<ConstraintViolation<Object>> violations = validator.validate(requestToValidate);
         if (!violations.isEmpty()) {
             var errorMessages = violations
                 .stream()

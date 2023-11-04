@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
@@ -146,5 +147,642 @@ public class BloodDonationEventControllerTest {
         assertThat(savedBloodDonationEvent)
                 .usingRecursiveComparison(ignoreIdConfig)
                 .isEqualTo(expectedBloodDonationEvent);
+    }
+
+    @Test
+    void badEventNameFormatEmptyEventName() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = "";
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now(),
+                "ONeg",
+                5,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badEventNameFormatTooShort() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = "a";
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now(),
+                "ONeg",
+                5,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badEventNameFormatTooLong() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = "b123456789b123456789b123456798b12345";
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now(),
+                "ONeg",
+                5,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badEventDateFormatDateIsNotFutureOrPresent() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = faker.company().name().toString();
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now().minusYears(1L),
+                "ONeg",
+                5,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badBloodTypeFormat() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = faker.company().name().toString();
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now().minusYears(1L),
+                "O",
+                5,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badUnitsFormatLesThanZero() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = faker.company().name().toString();
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now().minusYears(1L),
+                "ONeg",
+                -1,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
+    }
+
+    @Test
+    void badUnitsFormatGreaterThanFive() {
+        // get jwt token from Keycloak
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.put("grant_type", Collections.singletonList("password"));
+        formData.put("client_id", Collections.singletonList("blood-donor-system-rest-api"));
+        formData.put("username", Collections.singletonList("milos"));
+        formData.put("password", Collections.singletonList("milos"));
+
+        String resultString = webTestClient.post()
+                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .body(BodyInserters.fromFormData(formData))
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<String>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String jwt = jsonParser.parseMap(resultString).get("access_token").toString();
+
+        // create faker user
+        Faker faker = new Faker();
+        Name fakerName = faker.name();
+
+        String firstName = fakerName.firstName();
+        String lastName = fakerName.lastName();
+        String email = fakerName.lastName() + UUID.randomUUID() + "@integrationTest.com";
+
+        // create admin registration request
+        UsersRegistrationRequest adminRequest = new UsersRegistrationRequest(
+                firstName,
+                lastName,
+                email + "---ADMIN",
+                "ADMIN",
+                "ABPos"
+        );
+
+        // register admin user
+        webTestClient.post()
+                .uri("/api/v1/admin/register_user")
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(adminRequest), UsersRegistrationRequest.class)
+                .exchange()
+                .expectStatus()
+                .isCreated();
+
+        // get all admin users
+        List<Users> allAdmins = webTestClient.get()
+                .uri("/api/v1/admin")
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBodyList(new ParameterizedTypeReference<Users>() {
+                })
+                .returnResult()
+                .getResponseBody();
+
+        // get admin user from users
+        Users adminUser = allAdmins.stream()
+                .filter(user -> user.getEmail().equals(adminRequest.email()))
+                .findFirst()
+                .orElseThrow();
+
+        // make blood donation event request
+        String eventName = faker.company().name().toString();
+        BloodDonationEventRequest bloodDonationEventRequest = new BloodDonationEventRequest(
+                eventName,
+                LocalDate.now().minusYears(1L),
+                "ONeg",
+                10,
+                adminUser
+        );
+
+        // send a post request for registering new event
+        webTestClient.post()
+                .uri(donationEventURI + "/donation_event")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .headers(h -> h.setBearerAuth(jwt))
+                .body(Mono.just(bloodDonationEventRequest), BloodDonationEventRequest.class)
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatusCode.valueOf(406));
     }
 }

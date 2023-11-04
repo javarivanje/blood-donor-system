@@ -12,6 +12,8 @@ import com.bds.models.BloodType;
 import com.bds.models.Role;
 import com.bds.models.Users;
 import com.bds.repositories.BloodDonationsRepository;
+import com.bds.repositories.UsersRepository;
+import com.bds.validators.DtoValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +22,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -34,11 +38,15 @@ class BloodDonationsServiceTest {
 
     @Mock
     private BloodDonationsRepository bloodDonationsRepository;
+    @Mock
+    private UsersRepository usersRepository;
+    @Mock
+    private DtoValidator<Object> validator;
     private BloodDonationsService underTest;
 
     @BeforeEach
     void setUp() {
-        underTest = new BloodDonationsService(bloodDonationsRepository);
+        underTest = new BloodDonationsService(bloodDonationsRepository, usersRepository, validator);
     }
 
     @Test
@@ -326,15 +334,90 @@ class BloodDonationsServiceTest {
     }
 
     @Test
-    void getBloodDonations() {
+    void willGetBloodDonations() {
         // Given
         Long donorId = 1L;
+        Users donor = new Users(
+                donorId,
+                "milos",
+                "bacetic",
+                "milos.bacetic@gmail.com",
+                Role.DONOR,
+                BloodType.APos
+        );
+
+        Users admin = new Users(
+                "miki",
+                "mikic",
+                "miki.mikic@gmail.com",
+                Role.ADMIN,
+                BloodType.ANeg
+        );
+
+        BloodDonations bloodDonations = new BloodDonations(
+                1L,
+                3,
+                LocalDate.now(),
+                donor,
+                admin
+        );
+
+        List<BloodDonations> bloodDonationsList = new ArrayList<BloodDonations>();
+        bloodDonationsList.add(bloodDonations);
+
+        given(usersRepository.findById(donorId))
+                .willReturn(Optional.of(donor));
+        given(bloodDonationsRepository.findByDonorId(donorId))
+                .willReturn(bloodDonationsList);
 
         // When
         underTest.getBloodDonations(donorId);
 
         // Then
         verify(bloodDonationsRepository).findByDonorId(donorId);
+    }
+
+    @Test
+    void getBloodDonationsWhenDonorIsNotFoundWillThrowResourceNotFoundException() {
+        // Given
+        Long donorId = 1l;
+
+        given(usersRepository.findById(donorId))
+                .willReturn(Optional.empty());
+
+        // When
+        // Then
+        assertThatThrownBy(() -> underTest.getBloodDonations(donorId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Donor with given id: " + donorId + " does not exist");
+    }
+
+    @Test
+    void getBloodDonationsWhenBloodDonationIsNotFoundWillThrowResourceNotFoundException() {
+        // Given
+        Long donorId = 1L;
+        Users donor = new Users(
+                donorId,
+                "milos",
+                "bacetic",
+                "milos.bacetic@gmail.com",
+                Role.DONOR,
+                BloodType.APos
+        );
+
+
+        List<BloodDonations> bloodDonationsList = new ArrayList<BloodDonations>();
+
+        given(usersRepository.findById(donorId))
+                .willReturn(Optional.of(donor));
+        given(bloodDonationsRepository.findByDonorId(donorId))
+                .willReturn(bloodDonationsList);
+
+        // When
+        // Then
+        assertThatThrownBy(() -> underTest.getBloodDonations(donorId))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("Donor with given id: " + donorId + " does not have donations");
     }
 
     @Test

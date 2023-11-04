@@ -29,7 +29,7 @@ class UsersServiceTest {
     @Mock
     private UsersRepository usersRepository;
     @Mock
-    private DtoValidator<UsersRegistrationRequest> validator;
+    private DtoValidator<Object> validator;
     private UsersService underTest;
 
     @BeforeEach

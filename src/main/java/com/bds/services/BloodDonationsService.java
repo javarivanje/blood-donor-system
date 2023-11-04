@@ -7,6 +7,8 @@ import com.bds.exception.ResourceNotFoundException;
 import com.bds.models.BloodDonations;
 import com.bds.dto.BloodUnits;
 import com.bds.repositories.BloodDonationsRepository;
+import com.bds.repositories.UsersRepository;
+import com.bds.validators.DtoValidator;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,10 +16,14 @@ import java.util.List;
 @Service
 public class BloodDonationsService {
 
-    BloodDonationsRepository bloodDonationsRepository;
+    private final BloodDonationsRepository bloodDonationsRepository;
+    private final UsersRepository usersRepository;
+    private final DtoValidator<Object> validator;
 
-    public BloodDonationsService(BloodDonationsRepository bloodDonationsRepository) {
+    public BloodDonationsService(BloodDonationsRepository bloodDonationsRepository, UsersRepository usersRepository, DtoValidator<Object> validator) {
         this.bloodDonationsRepository = bloodDonationsRepository;
+        this.usersRepository = usersRepository;
+        this.validator = validator;
     }
 
     public List<BloodUnits> countAvailableUnitsByBloodType() {
@@ -25,7 +31,7 @@ public class BloodDonationsService {
     }
 
     public BloodDonations addBloodDonation(BloodDonationRequest bloodDonationRequest) {
-
+        validator.validate(bloodDonationRequest);
         if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
                 bloodDonationRequest.donor().getId(),
                 bloodDonationRequest.donationDate())
@@ -45,7 +51,7 @@ public class BloodDonationsService {
     }
 
     public void confirmBloodDonation(Long donationId, ConfirmDonationRequest confirmDonationRequest) {
-
+            validator.validate(confirmDonationRequest);
             BloodDonations savedBloodDonations = bloodDonationsRepository.findById(donationId)
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "donation id does not exists"
@@ -63,7 +69,7 @@ public class BloodDonationsService {
     }
 
     public void initiateBloodDonation(InitiateBloodDonationRequest initiateBloodDonationRequest) {
-
+        validator.validate(initiateBloodDonationRequest);
         if (bloodDonationsRepository.existsBloodDonationsByDonorAndDonationDate(
                 initiateBloodDonationRequest.donor().getId(),
                 initiateBloodDonationRequest.donationDate()
@@ -81,10 +87,20 @@ public class BloodDonationsService {
     }
 
     public List<BloodDonations> getBloodDonations(Long donorId) {
-        return bloodDonationsRepository.findByDonorId(donorId);
+        if(!usersRepository.findById(donorId).isPresent()) {
+            throw new ResourceNotFoundException("Donor with given id: " + donorId + " does not exist");
+        }
+
+        List<BloodDonations> bloodDonationsList =
+                bloodDonationsRepository.findByDonorId(donorId);
+        if (bloodDonationsList.isEmpty()) {
+            throw new ResourceNotFoundException("Donor with given id: " + donorId + " does not have donations");
+        }
+        return bloodDonationsList;
     }
 
     public void donorBloodDonationRequest(DonorBloodDonationRequest donorBloodDonationRequest) {
+        validator.validate(donorBloodDonationRequest);
         bloodDonationsRepository.save(
                 new BloodDonations(
                         donorBloodDonationRequest.units(),

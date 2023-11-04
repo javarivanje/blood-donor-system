@@ -16,9 +16,9 @@ import java.util.List;
 public class UsersService {
 
     private final UsersRepository usersRepository;
-    private final DtoValidator<UsersRegistrationRequest> validator;
+    private final DtoValidator<Object> validator;
 
-    public UsersService(UsersRepository usersRepository, DtoValidator<UsersRegistrationRequest> validator) {
+    public UsersService(UsersRepository usersRepository, DtoValidator<Object> validator) {
         this.usersRepository = usersRepository;
         this.validator = validator;
     }
