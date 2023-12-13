@@ -5,6 +5,7 @@ import com.bds.models.BloodDonations;
 import com.bds.models.Users;
 import com.github.javafaker.Faker;
 import com.github.javafaker.Name;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.json.JacksonJsonParser;
@@ -12,10 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDate;
@@ -26,6 +31,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+@Testcontainers
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class BloodDonationsControllerTest {
 
@@ -33,6 +39,18 @@ public class BloodDonationsControllerTest {
     WebTestClient webTestClient;
 
     private static final String bloodDonationURI = "api/v1";
+
+    @Container
+    static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:22.0.1")
+            .withRealmImportFile("keycloak/Milos-realm.json");
+
+    @DynamicPropertySource
+    static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
+        registry.add(
+                "spring.security.oauth2.resourceserver.jwt.issuer-uri",
+                () -> keycloak.getAuthServerUrl() + "/realms/Milos"
+        );
+    }
 
     @Test
     void canAddBloodDonation() {
@@ -44,7 +62,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
@@ -242,7 +260,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
@@ -459,7 +477,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
@@ -588,7 +606,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
@@ -717,7 +735,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
@@ -804,7 +822,7 @@ public class BloodDonationsControllerTest {
         formData.put("password", Collections.singletonList("milos"));
 
         String resultString = webTestClient.post()
-                .uri("http://localhost:8080/realms/Milos/protocol/openid-connect/token")
+                .uri(keycloak.getAuthServerUrl() + "/realms/Milos/protocol/openid-connect/token")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(BodyInserters.fromFormData(formData))
                 .exchange()
