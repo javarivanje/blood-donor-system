@@ -39,21 +39,20 @@ jobs:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5332
         run: |
-          echo "CREATE TABLE IF NOT EXISTS users 
-          (id BIGSERIAL PRIMARY KEY, 
-          first_name TEXT NOT NULL, 
-          last_name TEXT NOT NULL, 
-          email TEXT NOT NULL, 
-          role TEXT NOT NULL 
-            CHECK (role in ('ADMIN', 'DONOR')),
-          blood_type TEXT not null 
-            CHECK (
-              blood_type in 
-                ('APos', 'ANeg', 
-                 'BPos', 'BNeg', 
-                 'ABPos', 'ABNeg', 
-                 'OPos', 'ONeg')));" | psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -W
+          PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -c "
+          CREATE TABLE IF NOT EXISTS users (
+            id BIGSERIAL PRIMARY KEY, 
+            first_name TEXT NOT NULL, 
+            last_name TEXT NOT NULL, 
+            email TEXT NOT NULL UNIQUE, 
+            role TEXT NOT NULL CHECK (role in ('ADMIN', 'DONOR')),
+            blood_type TEXT not null CHECK (
+              blood_type in ('APos', 'ANeg', 'BPos', 'BNeg', 'ABPos', 'ABNeg', 'OPos', 'ONeg')));" | psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -W
+          );
           
-          echo "INSERT INTO users (first_name, last_name, email, role, blood_type) VALUES ('milos', 'b', 'milos@gmail.com', 'ADMIN', 'APos');" | psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -W
+          INSERT INTO users (first_name, last_name, email, role, blood_type) 
+          VALUES ('milos', 'b', 'milos@gmail.com', 'ADMIN', 'APos');
+          " 
+
       - name: Build and run Unit/Integration Test with Maven
         run: mvn -ntp -B verify
