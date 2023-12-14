@@ -45,8 +45,6 @@ public class UsersControllerTest {
     static KeycloakContainer keycloak = new KeycloakContainer("quay.io/keycloak/keycloak:22.0.1")
                  .withRealmImportFile("keycloak/Milos-realm.json");
 
-//    keycloak.start();
-
     @DynamicPropertySource
     static void registerResourceServerIssuerProperty(DynamicPropertyRegistry registry) {
         registry.add(
@@ -54,15 +52,6 @@ public class UsersControllerTest {
                 () -> keycloak.getAuthServerUrl() + "/realms/Milos"
         );
     }
-
-//    private static String keycloakURI = keycloak.getAuthServerUrl();
-
-//    @Test
-//    void canStartKeycloakContainer() {
-//        assertThat(keycloak.isCreated()).isTrue();
-//        assertThat(keycloak.isRunning()).isTrue();
-//
-//    }
 
     @Test
     void canRegisterNewUser() {

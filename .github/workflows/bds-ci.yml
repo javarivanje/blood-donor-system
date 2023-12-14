@@ -30,5 +30,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+      - name: Insert data into PostgreSQL database
+        env:
+          POSTGRES_USER: milos
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: bds
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5332
+        run: |
+          echo "INSERT INTO users (first_name, last_name, email, role, blood_type) VALUES ('milos', 'b', 'milos@gmail.com', 'ADMIN', 'APos');" | psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT
       - name: Build and run Unit/Integration Test with Maven
         run: mvn -ntp -B verify
