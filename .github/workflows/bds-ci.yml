@@ -6,30 +6,6 @@ on:
       - "main"
 
 jobs:
-  setup-database:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:15.3
-        env:
-          POSTGRES_USER: milos
-          POSTGRES_DB: bds
-          POSTGRES_PASSWORD: password
-        ports:
-          - 5332:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Wait for PostgreSQL to be ready
-        run: dockerize -wait tcp://localhost:5332 -timeout 1m
-
-      - name: Insert data into PostgreSQL database
-        run: |
-          echo "INSERT INTO users (first_name, last_name, email, role, blood_type) VALUES ('milos', 'b', 'milos@gmail.com', 'ADMIN', 'APos');" | psql -h localhost -U milos -d bds -p 5332 -W
 
   build:
     runs-on: ubuntu-latest
@@ -55,5 +31,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+      - name: Insert data into PostgreSQL database
+        env:
+          POSTGRES_USER: milos
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: bds
+          POSTGRES_HOST: 0.0.0.0
+          POSTGRES_PORT: 5332
+        run: |
+          echo "INSERT INTO users (first_name, last_name, email, role, blood_type) VALUES ('milos', 'b', 'milos@gmail.com', 'ADMIN', 'APos');" | psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -W
       - name: Build and run Unit/Integration Test with Maven
         run: mvn -ntp -B verify
