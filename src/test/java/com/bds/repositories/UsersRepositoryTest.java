@@ -62,7 +62,7 @@ class UsersRepositoryTest extends AbstractTestcontainers {
                 "milos",
                 "bacetic",
                 "milos.bacetic@gmail.com",
-                Role.DONOR,
+                Role.ADMIN,
                 BloodType.APos
         );
         underTest.save(users);
@@ -71,17 +71,18 @@ class UsersRepositoryTest extends AbstractTestcontainers {
                 "nemanja",
                 "stanojevic",
                 "nemanja.stanojevic@gmail.com",
-                Role.DONOR,
+                Role.ADMIN,
                 BloodType.BNeg
         );
         underTest.save(users2);
 
         // When
-        List<Users> allUsers = underTest.findByRoleIs(Role.ADMIN);
+        List<Users> allUsers = underTest.findByRoleIs(Role.DONOR);
 
         // Then
-        assertThat(allUsers).isEmpty();//               allMatch(user -> user.getRole().equals(Role.ADMIN));
+        assertThat(allUsers).isEmpty();
     }
+
     @Test
     void existsUsersByEmail() {
         // Given
