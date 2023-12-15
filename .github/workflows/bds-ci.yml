@@ -25,15 +25,13 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Test PostgreSQL Connection
-        run: psql -h localhost -U milos -d bds -p 5332 -W
-
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
           cache: 'maven'
+
       - name: Insert data into PostgreSQL database
         env:
           POSTGRES_USER: milos
@@ -42,7 +40,7 @@ jobs:
           POSTGRES_HOST: localhost
           POSTGRES_PORT: 5332
         run: |
-          PGPASSWORD=$POSTGRES_PASSWORD psql -h $POSTGRES_HOST -U $POSTGRES_USER -d $POSTGRES_DB -p $POSTGRES_PORT -c "
+          psql -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTGRES_DB -w $POSTGRES_PASSWORD -c "
           CREATE TABLE IF NOT EXISTS users (
             id BIGSERIAL PRIMARY KEY, 
             first_name TEXT NOT NULL, 
