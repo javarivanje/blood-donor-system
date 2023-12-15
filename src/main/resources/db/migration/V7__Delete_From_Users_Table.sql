@@ -1,2 +1,2 @@
-DELET FROM users
+DELETE FROM users
 WHERE email = 'stanoje@gmail.com';
