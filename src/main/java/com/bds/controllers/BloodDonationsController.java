@@ -130,9 +130,11 @@ public class BloodDonationsController {
     })
     @GetMapping("/donor/my_blood_donations/{donorId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'DONOR')")
-    public List<BloodDonations> getDonorBloodDonations(
+    public ResponseEntity<List<BloodDonations>> getDonorBloodDonations(
             @Parameter(description = "Donor id", required = true)
             @PathVariable("donorId") Long donorId) {
-        return bloodDonationsService.getBloodDonations(donorId);
+        return new ResponseEntity<>(
+                bloodDonationsService.getBloodDonations(donorId),
+                HttpStatus.OK);
     }
 }

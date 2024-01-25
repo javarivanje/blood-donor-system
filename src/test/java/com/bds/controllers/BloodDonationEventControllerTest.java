@@ -150,7 +150,6 @@ public class BloodDonationEventControllerTest {
                 .getResponseBody();
 
         // make sure that event is saved
-
         BloodDonationEvent expectedBloodDonationEvent = new BloodDonationEvent(
                 eventName,
                 LocalDate.now(),
