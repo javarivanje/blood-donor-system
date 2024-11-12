@@ -20,8 +20,10 @@ Users can register on their own or ADMIN can register users on-site.
 2. Install postgres and create database bds inside
 
 3. Install Keycloak with admin set to Milos or change issuer-uri: at application.yml to your admin.
-  3.1. If you have changed your admin to something else than Milos then change issuer-uri at application.yml to match you admin
-  3.2. Set users priviledge to ADMIN or DONOR
+  
+4. If you have changed your admin to something else than Milos then change issuer-uri at application.yml to match you admin
+
+5. Set users priviledge to ADMIN or DONOR
 
 ## Usage
 To run the project, use the following command:
