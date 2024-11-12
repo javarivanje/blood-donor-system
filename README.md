@@ -31,7 +31,7 @@ To run the project, use the following command:
 java -jar target/[name of jar file].jar
 ```
 ## Features
-Thisapplication is for tracking blood donations.
+This application is for tracking blood donations.
 It has two different type of users, ADMIN and DONOR.
 
 ADMIN users can:
@@ -55,6 +55,6 @@ DONOR users can:
 5. Create a pull request.
 
 ## License
-This application is free to use, share and develop further.
+This application is free for use, share and further development.
 
    
