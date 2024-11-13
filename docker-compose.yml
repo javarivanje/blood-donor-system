@@ -14,6 +14,19 @@ services:
       - db
     restart: unless-stopped
 
+  blood-donor-system-api:
+    container_name: blood-donor-system-api
+    image: mlsbace/blood-donor-system:latest
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bds
+    ports:
+      - "8088:8081"
+    networks:
+      - db
+    depends_on:
+      - db
+    restart: unless-stopped
+
 networks:
   db:
     driver: bridge
